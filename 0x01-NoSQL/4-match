@@ -1,0 +1,2 @@
+// finding first instance
+db.school.findOne({name:"Holberton school"})

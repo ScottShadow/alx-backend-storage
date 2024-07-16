@@ -1,0 +1,2 @@
+//diplay member count
+db.school.count()
