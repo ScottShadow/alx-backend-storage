@@ -15,24 +15,33 @@ def log_stats():
             None
     """
     client = MongoClient('mongodb://127.0.0.1:27017')
-    collection = client.logs.nginx
-    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    print(f"{collection.count_documents({})} logs")
+    logs_collection = client.logs.nginx
+    total = logs_collection.count_documents({})
+    get = logs_collection.count_documents({"method": "GET"})
+    post = logs_collection.count_documents({"method": "POST"})
+    put = logs_collection.count_documents({"method": "PUT"})
+    patch = logs_collection.count_documents({"method": "PATCH"})
+    delete = logs_collection.count_documents({"method": "DELETE"})
+    path = logs_collection.count_documents(
+        {"method": "GET", "path": "/status"})
+    print(f"{total} logs")
     print("Methods:")
-    for method in methods:
-        calling = collection.count_documents({'method': method})
-        print(f"\tmethod {method}: {calling}")
-    path = collection.count_documents({'method': 'GET', 'path': '/status'})
+    print(f"\tmethod GET: {get}")
+    print(f"\tmethod POST: {post}")
+    print(f"\tmethod PUT: {put}")
+    print(f"\tmethod PATCH: {patch}")
+    print(f"\tmethod DELETE: {delete}")
     print(f"{path} status check")
     print("IPs:")
-    ips = collection.aggregate([{"$group":
-                                 {"_id": "$ip", "count": {"$sum": 1}}},
-                                {"$sort": {"count": -1}}])
+    sorted_ips = logs_collection.aggregate(
+        [{"$group": {"_id": "$ip", "count": {"$sum": 1}}},
+         {"$sort": {"count": -1}}])
     i = 0
-    for ip in ips:
-        if i < 10:
-            print(f"\t{ip.get('_id')}: {ip.get('count')}")
-            i += 1
+    for s in sorted_ips:
+        if i == 10:
+            break
+        print(f"\t{s.get('_id')}: {s.get('count')}")
+        i += 1
 
 
 if __name__ == "__main__":
