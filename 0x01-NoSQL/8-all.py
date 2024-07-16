@@ -13,9 +13,7 @@ def list_all(mongo_collection: Collection):
         mongo_collection (Collection): The MongoDB collection.
 
     Returns:
-        list: A list of documents (dictionaries) in the collection.
+        A list of documents (dictionaries) in the collection.
     """
-    if mongo_collection is None:
-        return []
 
-    return list(mongo_collection.find())
+    return mongo_collection.find()

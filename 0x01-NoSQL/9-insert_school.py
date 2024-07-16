@@ -3,10 +3,10 @@
 This script provides some stats about Nginx logs stored in a
 MongoDB collection.
 """
-from pymongo.collection import Collection
+from pymongo import MongoClient
 
 
-def insert_school(mongo_collection: Collection, **kwargs):
+def insert_school(mongo_collection, **kwargs):
     """
     This function inserts a new document in a collection based on kwargs.
     Args:
